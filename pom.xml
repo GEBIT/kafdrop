@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -10,7 +11,7 @@
     </parent>
     <groupId>com.obsidiandynamics.kafdrop</groupId>
     <artifactId>kafdrop</artifactId>
-    <version>3.31.0-SNAPSHOT</version>
+    <version>3.31.0-gebit1-SNAPSHOT</version>
 
     <description>For when you have a Kafka cluster to monitor</description>
 
@@ -25,13 +26,7 @@
         <kafka-libs.version>7.3.0</kafka-libs.version>
     </properties>
 
-    <scm>
-        <connection>scm:git:git@github.com:obsidiandynamics/kafdrop.git</connection>
-        <developerConnection>scm:git:git@github.com:obsidiandynamics/kafdrop.git</developerConnection>
-        <tag>HEAD</tag>
-    </scm>
-
-    <distributionManagement>
+  <distributionManagement>
         <repository>
             <id>bintray-obsidiandynamics-kafdrop</id>
             <name>obsidiandynamics-kafdrop</name>
@@ -204,6 +199,41 @@
 
     </dependencies>
 
+	<profiles>
+		<profile>
+			<id>gcr-build-and-push-docker-image</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>ru.yaal.maven</groupId>
+						<artifactId>write-text-files-maven-plugin</artifactId>
+						<version>1.1</version>
+						<executions>
+							<execution>
+								<id>create-application-default-creds</id>
+								<phase>compile</phase>
+								<goals>
+									<goal>write-text-files</goal>
+								</goals>
+								<configuration>
+									<charset>UTF-8</charset>
+									<files>
+										<file>
+											<path>${env.HOME}/.config/gcloud/application_default_credentials.json</path>
+											<lines>
+												<line>${env.EU_GCR_IO_RP_PASSWORD}</line>
+											</lines>
+										</file>
+									</files>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
     <build>
         <plugins>
             <plugin>
@@ -227,6 +257,15 @@
                         <descriptor>src/main/assembly/bin.xml</descriptor>
                     </descriptors>
                 </configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id> <!-- this is used for inheritance merges -->
+						<phase>package</phase> <!-- bind to the packaging phase -->
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
             </plugin>
             <plugin>
                 <!-- Build an executable JAR -->
@@ -247,7 +286,7 @@
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>1.2.2</version>
                 <configuration>
-                    <imageName>obsidiandynamics/kafdrop</imageName>
+		    <imageName>rp/common/tools/gkafdrop</imageName>
                     <forceTags>true</forceTags>
                     <dockerDirectory>${project.build.directory}/docker-ready</dockerDirectory>
                     <imageTags>
@@ -262,6 +301,36 @@
                         </resource>
                     </resources>
                 </configuration>
+				<executions>
+					<execution>
+						<id>build-image</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>build</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>tag-image</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>tag</goal>
+						</goals>
+						<configuration>
+							<image>rp/common/tools/gkafdrop:${project.version}</image>
+							<newName>eu.gcr.io/western-bonsai-334411/rp/common/tools/gkafdrop:${project.version}</newName>
+						</configuration>
+					</execution>
+					<execution>
+						<id>push-image</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>push</goal>
+						</goals>
+						<configuration>
+							<imageName>eu.gcr.io/western-bonsai-334411/rp/common/tools/gkafdrop:${project.version}</imageName>
+						</configuration>
+					</execution>
+				</executions>
             </plugin>
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -313,6 +382,17 @@
                         </goals>
                     </execution>
                 </executions>
+			</plugin>
+			<plugin>
+				<groupId>de.gebit.build.maven</groupId>
+				<artifactId>gitflow-maven-plugin</artifactId>
+				<version>2.3.1</version>
+				<configuration>
+					<gitFlowConfig> <!-- make sure that the "latest" branch will be managed by gitflow -->
+						<noProduction>false</noProduction>
+						<productionBranch>latest</productionBranch>
+					</gitFlowConfig>
+				</configuration>
             </plugin>
         </plugins>
         <resources>
