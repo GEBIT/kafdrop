@@ -315,6 +315,9 @@
 						<goals>
 							<goal>push</goal>
 						</goals>
+						<configuration>
+                            <imageName>eu.gcr.io/western-bonsai-334411/rp/common/tools/kafdrop:${project.version}</imageName>
+						</configuration>
 					</execution>
 				</executions>
             </plugin>
