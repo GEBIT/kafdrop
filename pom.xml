@@ -286,7 +286,7 @@
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>1.2.2</version>
                 <configuration>
-                    <imageName>rp/common/tools/kafdrop</imageName>
+                    <imageName>eu.gcr.io/western-bonsai-334411/rp/common/tools/kafdrop</imageName>
                     <forceTags>true</forceTags>
                     <dockerDirectory>${project.build.directory}/docker-ready</dockerDirectory>
                     <imageTags>
@@ -310,25 +310,11 @@
 						</goals>
 					</execution>
 					<execution>
-						<id>tag-image</id>
-						<phase>deploy</phase>
-						<goals>
-							<goal>tag</goal>
-						</goals>
-						<configuration>
-                            <image>rp/common/tools/kafdrop:${project.version}</image>
-                            <newName>eu.gcr.io/western-bonsai-334411/rp/common/tools/kafdrop:${project.version}</newName>
-						</configuration>
-					</execution>
-					<execution>
 						<id>push-image</id>
 						<phase>deploy</phase>
 						<goals>
 							<goal>push</goal>
 						</goals>
-						<configuration>
-                            <imageName>eu.gcr.io/western-bonsai-334411/rp/common/tools/kafdrop:${project.version}</imageName>
-						</configuration>
 					</execution>
 				</executions>
             </plugin>
