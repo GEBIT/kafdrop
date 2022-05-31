@@ -264,12 +264,9 @@ public final class MessageController {
 
       deserializer = new AvroMessageDeserializer(topicName, schemaRegistryUrl, schemaRegistryAuth);
     } else if (format == MessageFormat.PROTOBUF && null != descFile) {
-      // filter the input file name
-
-      final var descFileName = descFile.replace(".desc", "")
-          .replace(".", "")
-          .replace("/", "");
-      final var fullDescFile = protobufProperties.getDirectory() + File.separator + descFileName + ".desc";
+      // if a user pass a protobuf directory without a slash, append one instead of hard suffixing a slash independent whether containing a slash or not
+      // this avoids that there are two slashes which might be error prone in some environments
+      final var fullDescFile = protobufProperties.getDirectory() + (!protobufProperties.getDirectory().endsWith(File.separator) ? File.separator : "") + descFile;
       deserializer = new ProtobufMessageDeserializer(fullDescFile, msgTypeName, isAnyProto);
     } else if (format == MessageFormat.PROTOBUF) {
       final var schemaRegistryUrl = schemaRegistryProperties.getConnect();
