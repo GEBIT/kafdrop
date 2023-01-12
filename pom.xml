@@ -24,6 +24,23 @@
         <protobuf.version>3.21.11</protobuf.version>
         <testcontainers.version>1.17.6</testcontainers.version>
         <kafka-libs.version>7.3.0</kafka-libs.version>
+        
+	    <!-- Version of the project (same as in version tag). It will be updated automatically by GEBIT flow. -->
+		<version.kafdrop>3.31.0-gebit1-SNAPSHOT</version.kafdrop>
+		<version.property>version.kafdrop</version.property>
+	
+		<project.build-name>kafdrop</project.build-name>
+		<project.jira>DINF</project.jira>
+	    
+	    <!-- Version of gebit-build to be used -->
+		<version.build>3.5.0</version.build>
+		<version.gitflow-maven-plugin>2.4.6</version.gitflow-maven-plugin>
+		<version.gebit-build-extension>1.2.2</version.gebit-build-extension>
+		<version.tiles>2.8-gebit37</version.tiles>
+	
+		<tiles.applyBefore>com.obsidiandynamics.kafdrop:kafdrop</tiles.applyBefore>
+		<tiles.mergeTarget>${tiles.applyBefore}</tiles.mergeTarget>
+		<flow.skipReleaseBranchMerge>true</flow.skipReleaseBranchMerge>
     </properties>
 
   <distributionManagement>
@@ -373,17 +390,27 @@
                 </executions>
 			</plugin>
 			<plugin>
-				<groupId>de.gebit.build.maven</groupId>
-				<artifactId>gitflow-maven-plugin</artifactId>
-				<version>2.3.1</version>
+				<groupId>io.repaint.maven</groupId>
+				<artifactId>tiles-maven-plugin</artifactId>
+				<version>${version.tiles}</version>
+				<extensions>true</extensions>
 				<configuration>
-					<gitFlowConfig> <!-- make sure that the "latest" branch will be managed by gitflow -->
-						<noProduction>false</noProduction>
-						<productionBranch>latest</productionBranch>
-					</gitFlowConfig>
+					<applyBefore>${tiles.applyBefore}</applyBefore>
+					<mergeTarget>${tiles.mergeTarget}</mergeTarget>
+					<tiles combine.children="append">
+						<tile>de.gebit.build.tile:build:${version.build}</tile>
+						<!-- hier can be added other tiles to be used -->
+					</tiles>
 				</configuration>
-            </plugin>
+			</plugin>
         </plugins>
+        <extensions>
+	        <extension>
+	            <groupId>de.gebit.build.maven</groupId>
+	            <artifactId>gebit-build-extension</artifactId>
+	            <version>${version.gebit-build-extension}</version>
+	        </extension>
+        </extensions>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
