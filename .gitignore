@@ -16,3 +16,4 @@ target
 kafka.properties*
 kafka.truststore.jks*
 kafka.keystore.jks*
+/eclipse-target/
