@@ -41,6 +41,8 @@
 		<tiles.applyBefore>com.obsidiandynamics.kafdrop:kafdrop</tiles.applyBefore>
 		<tiles.mergeTarget>${tiles.applyBefore}</tiles.mergeTarget>
 		<flow.skipReleaseBranchMerge>true</flow.skipReleaseBranchMerge>
+		<gebithub.registry>hub.gebit.de/gpo/retail-platform-landscape</gebithub.registry>
+		<docker-image.image-name>rp/common/tools/kafdrop</docker-image.image-name>
     </properties>
 
   <distributionManagement>
@@ -216,41 +218,6 @@
 
     </dependencies>
 
-	<profiles>
-		<profile>
-			<id>gcr-build-and-push-docker-image</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>ru.yaal.maven</groupId>
-						<artifactId>write-text-files-maven-plugin</artifactId>
-						<version>1.1</version>
-						<executions>
-							<execution>
-								<id>create-application-default-creds</id>
-								<phase>compile</phase>
-								<goals>
-									<goal>write-text-files</goal>
-								</goals>
-								<configuration>
-									<charset>UTF-8</charset>
-									<files>
-										<file>
-											<path>${env.HOME}/.config/gcloud/application_default_credentials.json</path>
-											<lines>
-												<line>${env.EU_GCR_IO_RP_PASSWORD}</line>
-											</lines>
-										</file>
-									</files>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
-
     <build>
         <plugins>
             <plugin>
@@ -303,7 +270,7 @@
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>1.2.2</version>
                 <configuration>
-                    <imageName>eu.gcr.io/western-bonsai-334411/rp/common/tools/kafdrop</imageName>
+                    <imageName>${gebithub.registry}/${docker-image.image-name}</imageName>
                     <forceTags>true</forceTags>
                     <dockerDirectory>${project.build.directory}/docker-ready</dockerDirectory>
                     <imageTags>
@@ -317,6 +284,7 @@
                             <include>${project.build.finalName}-bin.tar.gz</include>
                         </resource>
                     </resources>
+                    <serverId>gebithub</serverId>
                 </configuration>
 				<executions>
 					<execution>
@@ -333,7 +301,7 @@
 							<goal>push</goal>
 						</goals>
 						<configuration>
-                            <imageName>eu.gcr.io/western-bonsai-334411/rp/common/tools/kafdrop:${project.version}</imageName>
+                            <imageName>${gebithub.registry}/${docker-image.image-name}:${project.version}</imageName>
 						</configuration>
 					</execution>
 				</executions>

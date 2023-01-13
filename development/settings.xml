@@ -33,6 +33,12 @@
 			<id>gebit-maven-site</id>
 			<username>jenkins</username>
 		</server>
+		
+		<server>
+			<id>gebithub</id>
+			<username>${env.GEBITHUB_USERNAME}</username>
+			<password>${env.GEBITHUB_PASSWORD}</password>
+		</server>
 	</servers>
 
 	<profiles>
