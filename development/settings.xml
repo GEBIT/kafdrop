@@ -34,6 +34,7 @@
 			<username>jenkins</username>
 		</server>
 		
+		<!-- used by the docker-maven-plugin only! -->
 		<server>
 			<id>gebithub</id>
 			<username>${env.GEBITHUB_USERNAME}</username>
