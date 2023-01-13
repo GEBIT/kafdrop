@@ -43,6 +43,8 @@
 		<flow.skipReleaseBranchMerge>true</flow.skipReleaseBranchMerge>
 		<gebithub.registry>hub.gebit.de/gpo/retail-platform-landscape</gebithub.registry>
 		<docker-image.image-name>rp/common/tools/kafdrop</docker-image.image-name>
+		<java.version>11</java.version>
+		<version.java>${java.version}</version.java>
     </properties>
 
   <distributionManagement>
