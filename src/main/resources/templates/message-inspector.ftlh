@@ -74,7 +74,6 @@
 <#assign selectedPartition=messageForm.partition!0?number>
 <#assign selectedFormat=messageForm.format!defaultFormat>
 <#assign selectedKeyFormat=messageForm.keyFormat!defaultKeyFormat>
-<#assign selectedIsAnyProtoOpt=messageForm.isAnyProto>
 
 <div id="partitionSizes">
     <#assign curPartition=topic.getPartition(selectedPartition).get()>
@@ -152,14 +151,10 @@
             </#if>
         </div>
         &nbsp;&nbsp;
-        <div class="form-group" id="protobufIsAnyProto">
-        	<label class=control-label" for="format">Is Any proto?</label>
-            <select class="form-control" id="isAnyProto" name="isAnyProto">
-                 <#list isAnyProtoOpts as opt>
-                    <option value="${opt?c}" <#if opt == selectedIsAnyProtoOpt>selected="selected"</#if>>${opt?string('Yes', 'No')}</option>
-                </#list>
-            </select>
-        </div>
+		<div class="form-group form-check" id="protobufIsAnyProto">
+		    <input type="checkbox" class="form-check-input" id="isAnyProto" name="isAnyProto">
+			<label class="form-check-label" for="isAnyProto">Is Any proto?</label>
+		</div>
         &nbsp;&nbsp;
         <button id="viewMessagesBtn" class="btn btn-success" type="submit" ><i class="fa fa-search"></i> View Messages</button>
     </form>

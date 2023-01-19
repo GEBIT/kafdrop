@@ -164,7 +164,6 @@ public final class MessageController {
     model.addAttribute("defaultKeyFormat", defaultKeyFormat);
     model.addAttribute("keyFormats", KeyFormat.values());
     model.addAttribute("descFiles", protobufProperties.getDescFilesList());
-    model.addAttribute("isAnyProtoOpts", List.of(true, false));
 	model.addAttribute("messageTypes",
 			protobufProperties.getProtobufDescriptorConfigs()
 					.stream()
