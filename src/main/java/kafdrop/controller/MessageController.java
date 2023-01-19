@@ -42,6 +42,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -68,13 +69,16 @@ public final class MessageController {
   private final SchemaRegistryProperties schemaRegistryProperties;
 
   private final ProtobufDescriptorProperties protobufProperties;
+  
+  private final ObjectMapper mapper;
 
-  public MessageController(KafkaMonitor kafkaMonitor, MessageInspector messageInspector, MessageFormatProperties messageFormatProperties, SchemaRegistryProperties schemaRegistryProperties, ProtobufDescriptorProperties protobufProperties) {
+  public MessageController(KafkaMonitor kafkaMonitor, MessageInspector messageInspector, MessageFormatProperties messageFormatProperties, SchemaRegistryProperties schemaRegistryProperties, ProtobufDescriptorProperties protobufProperties, ObjectMapper mapper) {
     this.kafkaMonitor = kafkaMonitor;
     this.messageInspector = messageInspector;
     this.messageFormatProperties = messageFormatProperties;
     this.schemaRegistryProperties = schemaRegistryProperties;
-    this.protobufProperties = protobufProperties; 
+    this.protobufProperties = protobufProperties;
+    this.mapper = mapper;
   }
 
   /**
@@ -276,7 +280,7 @@ public final class MessageController {
       // if a user pass a protobuf directory without a slash, append one instead of hard suffixing a slash independent whether containing a slash or not
       // this avoids that there are two slashes which might be error prone in some environments
       final var fullDescFile = protobufProperties.getDirectory() + (!protobufProperties.getDirectory().endsWith(File.separator) ? File.separator : "") + descFile;
-      deserializer = new ProtobufMessageDeserializer(fullDescFile, msgTypeName, isAnyProto);
+      deserializer = new ProtobufMessageDeserializer(fullDescFile, msgTypeName, isAnyProto, mapper);
     } else if (format == MessageFormat.PROTOBUF) {
       final var schemaRegistryUrl = schemaRegistryProperties.getConnect();
       final var schemaRegistryAuth = schemaRegistryProperties.getAuth();

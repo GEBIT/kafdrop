@@ -13,6 +13,8 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.protobuf.Any;
 import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.DescriptorProtos.FileDescriptorProto;
@@ -29,13 +31,15 @@ public class ProtobufMessageDeserializer implements MessageDeserializer {
   private final String fullDescFile;
   private final String msgTypeName;
   private final boolean isAnyProto;
+  private final ObjectMapper mapper;
 
   private static final Logger LOG = LoggerFactory.getLogger(ProtobufMessageDeserializer.class);
 
-  public ProtobufMessageDeserializer(String fullDescFile, String msgTypeName, boolean isAnyProto) {
+  public ProtobufMessageDeserializer(String fullDescFile, String msgTypeName, boolean isAnyProto, ObjectMapper mapper) {
     this.fullDescFile = fullDescFile;
     this.msgTypeName = msgTypeName;
     this.isAnyProto = isAnyProto;
+    this.mapper = mapper;
   }
 
   @Override
@@ -79,7 +83,18 @@ public class ProtobufMessageDeserializer implements MessageDeserializer {
       JsonFormat.TypeRegistry typeRegistry = JsonFormat.TypeRegistry.newBuilder().add(descriptors).build();
       Printer printer = JsonFormat.printer().usingTypeRegistry(typeRegistry);
 
-      return printer.print(message).replace("\n", ""); // must remove line break so it defaults to collapse mode
+      String content = printer.print(message).replace("\n", ""); // must remove line break so it defaults to collapse mode
+      ObjectNode messageJson = mapper.createObjectNode();
+      
+      ObjectNode metadata = mapper.createObjectNode();
+      metadata.put("name", messageDescriptor.get().getName());
+      metadata.put("fullName", messageDescriptor.get().getFullName());
+      metadata.put("index", messageDescriptor.get().getIndex());
+      
+      messageJson.set("metadata", metadata);
+      messageJson.set("content", mapper.readTree(content));
+      
+      return mapper.writeValueAsString(messageJson);
     } catch (FileNotFoundException e) {
       final String errorMsg = "Couldn't open descriptor file: " + fullDescFile;
       LOG.error(errorMsg, e);
