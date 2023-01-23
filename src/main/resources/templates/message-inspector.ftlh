@@ -37,9 +37,20 @@
         .toggle-msg {
             float: left;
         }
+        
+        .es-input {
+        	background: #fff !important;
+        }
+        
+        .es-list {
+        	color: #444 !important;
+        }
     </style>
 
     <script src="<@spring.url '/js/message-inspector.js'/>"></script>
+    
+	<script src="//rawgithub.com/indrimuska/jquery-editable-select/2.2.5/dist/jquery-editable-select.min.js"></script>
+	<link href="//rawgithub.com/indrimuska/jquery-editable-select/2.2.5/dist/jquery-editable-select.min.css" rel="stylesheet">
     
     <script type="text/javascript">
 	$( document ).ready(updateProtobufPanel);
@@ -57,9 +68,13 @@
 	        $('#protobufMsgType').show();
 	        $('#descFile').prop('required',true);
             $('#protobufIsAnyProto').show();
+            <#if messageTypes?size gt 0>
+            	$('#isAnyProto').prop("checked", false);
+            </#if>
 	    }
 	}  
 	$(document).ready(function(){
+		$('#msgTypeName').editableSelect();
 	    $("#format").change(function() {
 	    	updateProtobufPanel();
 	    });
@@ -148,7 +163,11 @@
         <div class="form-group" id="protobufMsgType">
             <#if descFiles?size != 0>
               <label class=control-label" for="format">Protobuf message type name</label>
-              <@spring.formInput path="messageForm.msgTypeName" attributes='class="form-control"'/>
+              <select class="form-control" id="msgTypeName" name="msgTypeName">
+                 <#list messageTypes as mt>
+                    <option value="${mt}">${mt}</option>
+                </#list>
+            </select>
             </#if>
         </div>
         &nbsp;&nbsp;
