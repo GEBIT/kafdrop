@@ -147,7 +147,6 @@ public final class MessageController {
       defaultForm.setPartition(0);
       defaultForm.setFormat(defaultFormat);
       defaultForm.setKeyFormat(defaultFormat);
-      defaultForm.setIsAnyProto(protobufProperties.getParseAnyProto());
 
       model.addAttribute("messageForm", defaultForm);
     }
@@ -164,13 +163,15 @@ public final class MessageController {
     model.addAttribute("defaultKeyFormat", defaultKeyFormat);
     model.addAttribute("keyFormats", KeyFormat.values());
     model.addAttribute("descFiles", protobufProperties.getDescFilesList());
+	ProtobufDescriptorConfigVO protobufDescriptorConfig = protobufProperties
+			.getProtobufDescriptorConfigs().stream()
+			.filter(config -> topic.getName().equals(config.getTopic()))
+			.findFirst()
+			.orElseGet(() -> new ProtobufDescriptorConfigVO(topic.getName(),
+					Collections.emptyList(), false));
 	model.addAttribute("messageTypes",
-			protobufProperties.getProtobufDescriptorConfigs()
-					.stream()
-					.filter(config -> topic.getName().equals(config.getTopic()))
-					.findFirst()
-					.orElseGet(() -> new ProtobufDescriptorConfigVO(topic.getName(), Collections.emptyList()))
-					.getMessageTypes());
+			protobufDescriptorConfig.getMessageTypes());
+	model.addAttribute("isAnyProto", protobufDescriptorConfig.isAnyProto());
 
     if (!messageForm.isEmpty() && !errors.hasErrors()) {
 
