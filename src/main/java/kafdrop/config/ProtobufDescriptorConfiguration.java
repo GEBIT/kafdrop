@@ -103,7 +103,14 @@ public class ProtobufDescriptorConfiguration {
 				messageTypes = Collections.emptyList();
 			}
 			
-			configs.add(new ProtobufDescriptorConfigVO(topic, messageTypes));
+			Boolean isAnyProto = (Boolean) protoDescriptorMap.get("is_any_proto");
+			
+			if (isAnyProto == null) {
+				LOG.debug("{}.{}.{} contains no is_any_proto entry", groupId, artifactId, version);
+				isAnyProto = false;
+			}
+			
+			configs.add(new ProtobufDescriptorConfigVO(topic, messageTypes, isAnyProto));
 		}
 		
 		return configs;

@@ -68,8 +68,11 @@
 	        $('#protobufMsgType').show();
 	        $('#descFile').prop('required',true);
             $('#protobufIsAnyProto').show();
-            <#if messageTypes?size gt 0>
+            <#if messageTypes?size gt 0 || !isAnyProto>
             	$('#isAnyProto').prop("checked", false);
+            </#if>
+            <#if isAnyProto>
+            	$('#protobufIsAnyProto').hide();
             </#if>
 	    }
 	}  
@@ -171,7 +174,7 @@
         </div>
         &nbsp;&nbsp;
 		<div class="form-group form-check" id="protobufIsAnyProto">
-		    <input type="checkbox" class="form-check-input" id="isAnyProto" name="isAnyProto">
+		    <input type="checkbox" class="form-check-input" id="isAnyProto" name="isAnyProto" checked>
 			<label class="form-check-label" for="isAnyProto">Is Any proto?</label>
 		</div>
         &nbsp;&nbsp;
