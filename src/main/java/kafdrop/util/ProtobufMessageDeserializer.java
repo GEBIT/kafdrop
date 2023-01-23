@@ -10,9 +10,11 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.protobuf.Any;
@@ -70,7 +72,7 @@ public class ProtobufMessageDeserializer implements MessageDeserializer {
       if (messageDescriptor.isEmpty()) {
         final String errorMsg = "Can't find specific message type: " + msgTypeNameRef.get();
         LOG.error(errorMsg);
-        throw new DeserializationException(errorMsg);
+        return buildErrorJson(errorMsg, null);
       }
       DynamicMessage message = null;
       if (isAnyProto) {
@@ -98,16 +100,30 @@ public class ProtobufMessageDeserializer implements MessageDeserializer {
     } catch (FileNotFoundException e) {
       final String errorMsg = "Couldn't open descriptor file: " + fullDescFile;
       LOG.error(errorMsg, e);
-      throw new DeserializationException(errorMsg);
+      return buildErrorJson(errorMsg, e);
     } catch (IOException e) {
       final String errorMsg = "Can't decode Protobuf message";
       LOG.error(errorMsg, e);
-      throw new DeserializationException(errorMsg);
+      return buildErrorJson(errorMsg, e);
     } catch (DescriptorValidationException e) {
       final String errorMsg = "Can't compile proto message type: " + msgTypeNameRef.get();
       LOG.error(errorMsg, e);
-      throw new DeserializationException(errorMsg);
+      return buildErrorJson(errorMsg, e);
     }
   }
 
+  private String buildErrorJson(String errorMsg, Throwable exception) {
+	  try {
+		ObjectNode exceptionJson = mapper.createObjectNode();
+		exceptionJson.put("error_message", errorMsg);
+		
+		if (exception != null) {
+			exceptionJson.put("exception", ExceptionUtils.getStackTrace(exception));
+		}
+		
+		return mapper.writeValueAsString(exceptionJson);
+	} catch (JsonProcessingException exc) {
+		throw new RuntimeException(exc);
+	}
+  }
 }
