@@ -1,0 +1,17 @@
+kafka:
+  brokerConnect: localhost:31090
+
+topic:
+  deleteEnabled: false
+  createEnabled: false
+
+message:
+  format: PROTOBUF
+
+protobufdesc:
+  # must be provided as cli option
+  directory:
+  parseAnyProto: true
+  # must be provided as cli option
+  descriptorConfigFile:
+
