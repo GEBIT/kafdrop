@@ -20,6 +20,7 @@ package kafdrop.controller;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -49,6 +50,7 @@ import kafdrop.config.MessageFormatConfiguration.MessageFormatProperties;
 import kafdrop.config.ProtobufDescriptorConfiguration.ProtobufDescriptorProperties;
 import kafdrop.config.SchemaRegistryConfiguration.SchemaRegistryProperties;
 import kafdrop.model.MessageVO;
+import kafdrop.model.ProtobufDescriptorConfigVO;
 import kafdrop.model.TopicPartitionVO;
 import kafdrop.model.TopicVO;
 import kafdrop.service.KafkaMonitor;
@@ -159,6 +161,13 @@ public final class MessageController {
     model.addAttribute("keyFormats", KeyFormat.values());
     model.addAttribute("descFiles", protobufProperties.getDescFilesList());
     model.addAttribute("isAnyProtoOpts", List.of(true, false));
+	model.addAttribute("messageTypes",
+			protobufProperties.getProtobufDescriptorConfigs()
+					.stream()
+					.filter(config -> topic.getName().equals(config.getTopic()))
+					.findFirst()
+					.orElseGet(() -> new ProtobufDescriptorConfigVO(topic.getName(), Collections.emptyList()))
+					.getMessageTypes());
 
     if (!messageForm.isEmpty() && !errors.hasErrors()) {
 
