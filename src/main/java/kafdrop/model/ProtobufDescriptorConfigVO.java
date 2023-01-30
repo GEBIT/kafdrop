@@ -6,12 +6,10 @@ public final class ProtobufDescriptorConfigVO {
 
 	private String topic;
 	private List<String> messageTypes;
-	private boolean isAnyProto;
 	
-	public ProtobufDescriptorConfigVO(String topic, List<String> messageTypes, boolean isAnyProto) {
+	public ProtobufDescriptorConfigVO(String topic, List<String> messageTypes) {
 		this.topic = topic;
 		this.messageTypes = messageTypes;
-		this.isAnyProto = isAnyProto;
 	}
 
 	public String getTopic() {
@@ -28,13 +26,5 @@ public final class ProtobufDescriptorConfigVO {
 
 	public void setMessageTypes(List<String> messageTypes) {
 		this.messageTypes = messageTypes;
-	}
-
-	public boolean isAnyProto() {
-		return isAnyProto;
-	}
-	
-	public void setAnyProto(boolean isAnyProto) {
-		this.isAnyProto = isAnyProto;
 	}
 }
