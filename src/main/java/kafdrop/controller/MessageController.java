@@ -164,14 +164,26 @@ public final class MessageController {
     model.addAttribute("defaultKeyFormat", defaultKeyFormat);
     model.addAttribute("keyFormats", KeyFormat.values());
     model.addAttribute("descFiles", protobufProperties.getDescFilesList());
-	model.addAttribute("messageTypes",
-			protobufProperties.getProtobufDescriptorConfigs()
-					.stream()
-					.filter(config -> topic.getName().equals(config.getTopic()))
-					.findFirst()
-					.orElseGet(() -> new ProtobufDescriptorConfigVO(topic.getName(), Collections.emptyList()))
-					.getMessageTypes());
-
+    
+	if (messageForm.isEmpty()) {
+		String msgType = protobufProperties.getProtobufDescriptorConfigs()
+				.stream()
+				.filter(config -> topic.getName().equals(config.getTopic()))
+				.findFirst()
+				.orElseGet(() -> new ProtobufDescriptorConfigVO(topic.getName(),
+						null))
+				.getMessageType();
+		if (msgType != null) {
+			((PartitionOffsetInfo) model.getAttribute("messageForm"))
+					.setMsgTypeName(msgType);
+			((PartitionOffsetInfo) model.getAttribute("messageForm"))
+					.setIsAnyProto(false);
+		} else {
+			((PartitionOffsetInfo) model.getAttribute("messageForm"))
+					.setIsAnyProto(true);
+		}
+	}
+    
     if (!messageForm.isEmpty() && !errors.hasErrors()) {
 
       final var deserializers = new Deserializers(

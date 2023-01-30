@@ -96,14 +96,13 @@ public class ProtobufDescriptorConfiguration {
 			}
 			
 			String topic = destFile.replace(".desc", "");
-			List<String> messageTypes = (List<String>) protoDescriptorMap.get("msg_types");
+			String messageType = (String) protoDescriptorMap.get("msg_type");
 			
-			if (messageTypes == null || messageTypes.isEmpty()) {
-				LOG.debug("{}.{}.{} contains no msg_types entry", groupId, artifactId, version);
-				messageTypes = Collections.emptyList();
+			if (StringUtils.isBlank(messageType)) {
+				LOG.debug("{}.{}.{} contains no msg_type entry", groupId, artifactId, version);
 			}
 			
-			configs.add(new ProtobufDescriptorConfigVO(topic, messageTypes));
+			configs.add(new ProtobufDescriptorConfigVO(topic, messageType));
 		}
 		
 		return configs;

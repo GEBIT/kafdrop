@@ -49,15 +49,18 @@
 	    {
 	        $('#protobufDescriptor').hide();
 	        $('#protobufMsgType').hide();
-            $('#protobufIsAnyProto').hide();
 	    }
 	    else
 	    {
 	        $('#protobufDescriptor').show();
 	        $('#protobufMsgType').show();
 	        $('#descFile').prop('required',true);
-            $('#protobufIsAnyProto').show();
 	    }
+	   $('#protobufIsAnyProto').hide();
+	   <#if !messageForm.msgTypeName?has_content>
+	   	$('#protobufMsgType').hide();
+	   	$('#isAnyProto').prop('checked', true);
+	   </#if>   	   
 	}  
 	$(document).ready(function(){
 	    $("#format").change(function() {

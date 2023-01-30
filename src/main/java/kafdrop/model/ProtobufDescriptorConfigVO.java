@@ -1,15 +1,13 @@
 package kafdrop.model;
 
-import java.util.List;
-
 public final class ProtobufDescriptorConfigVO {
 
 	private String topic;
-	private List<String> messageTypes;
+	private String messageType;
 	
-	public ProtobufDescriptorConfigVO(String topic, List<String> messageTypes) {
+	public ProtobufDescriptorConfigVO(String topic, String messageType) {
 		this.topic = topic;
-		this.messageTypes = messageTypes;
+		this.messageType = messageType;
 	}
 
 	public String getTopic() {
@@ -20,11 +18,11 @@ public final class ProtobufDescriptorConfigVO {
 		this.topic = topic;
 	}
 
-	public List<String> getMessageTypes() {
-		return messageTypes;
+	public String getMessageType() {
+		return messageType;
 	}
 
-	public void setMessageTypes(List<String> messageTypes) {
-		this.messageTypes = messageTypes;
+	public void setMessageType(String messageType) {
+		this.messageType = messageType;
 	}
 }
