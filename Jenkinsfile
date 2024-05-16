@@ -9,3 +9,5 @@ pipelineStepHook.after('bindCredentials', {bindings ->
     }
     return bindings
 })
+
+buildPipeline(this)
